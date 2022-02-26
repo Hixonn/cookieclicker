@@ -1,0 +1,55 @@
+.title, .balance
+{
+    text-align: center;
+}
+
+
+#carrot
+{
+    display: flex;
+    justify-content: center;
+}
+
+#carrot img 
+{
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.upgrades_Container
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: column;
+    align-content: center;
+
+}
+
+.upgrade 
+{   
+    margin: 1em;
+    width: 40%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.upgradeInfo 
+{
+    display: flex;
+    justify-content: space-between;
+    width: 230px;
+}
+
+.upgradePay 
+{
+    display: flex;
+    justify-content: space-between;
+    width: 170px;
+}
+
+
