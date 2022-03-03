@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let number;
     let time = 0;
     let upgradeLVL = [1, 1, 1];
-    let upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, 0.05*upgradeLVL[2]*2];
+    let upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5,100000000000];
     let upgradeName = ["perSec", "perClick", "luckyClickChance"];
     let upgradeCost = [100*(upgradeLVL[0]+1),125*(upgradeLVL[1]+1),1000*(upgradeLVL[2]+1)];
     
@@ -50,12 +50,32 @@ document.addEventListener("DOMContentLoaded", function() {
             
     
     
+    let dice = {
+        roll: (sides) => {
+            let result = Math.floor(Math.random()*sides+1)
+            console.clear();
+            console.log(result);
+            if (result != sides) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
     
     
     function handleCarrotClick() 
     {
+        let lucky = dice.roll(1000);
+        console.log(lucky);
+        console.log(upgradeStats[2]);
+        
+        if (lucky == false) {     
+            carrotMoney += upgradeStats[1];
+        } else {
+            carrotMoney += upgradeStats[2];
+        }
         carrotMoney++;
-        carrotMoney += upgradeStats[1];
         displayUpdate();
     }
     
@@ -78,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     function displayUpdate()
     {
-        upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, 0.05*upgradeLVL[2]*2]
+        upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, 100000000*upgradeLVL[2]*2]
         upgradeCost = [100*(upgradeLVL[0]+1),125*(upgradeLVL[1]+1),1000*(upgradeLVL[2]+1)];
         
         for(let i = 0; i < upgradeName.length; i++)
