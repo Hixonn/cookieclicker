@@ -1,12 +1,24 @@
 document.addEventListener("DOMContentLoaded", function() { 
     let carrotMoney = 0;
-    const balanceDisplay = document.querySelector(".balance");
     let number;
     let time = 0;
     let upgradeLVL = [1, 1, 1];
     let upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5,100000000000];
     let upgradeName = ["perSec", "perClick", "luckyClickChance"];
-    let upgradeCost = [100*(upgradeLVL[0]+1),125*(upgradeLVL[1]+1),1000*(upgradeLVL[2]+1)];
+    let upgradeCost = [100*(upgradeLVL[0]),125*(upgradeLVL[1]+1),1000*(upgradeLVL[2]+1)];
+
+    let luckyClickChance = 1000;
+
+    let profitEffectAmount;
+
+    let balance = document.createElement("h2");
+
+        balance.setAttribute("color", "black");     
+        balance.innerHTML = `$${carrotMoney}`;
+        document.querySelector(".player-info").prepend(balance);
+
+
+    const balanceDisplay = balance;
     
     const ugBtn = document.querySelectorAll(".ugBtn");
     const cost = document.querySelectorAll(".cost")
@@ -19,6 +31,10 @@ document.addEventListener("DOMContentLoaded", function() {
         ugBtn[i].addEventListener("click", upgrade);
         
     }
+
+    
+
+    
     
 
     // for (let num in ugBtn) {
@@ -26,9 +42,19 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // }
         
-
+        const carrotImg = document.querySelector("#carrot img")
         const carrotBtn = document.querySelector("#carrot");
+
         carrotBtn.addEventListener("click", handleCarrotClick);
+
+        carrotBtn.addEventListener("mousedown", function() {
+            carrotImg.setAttribute("width", "13%");
+        });
+        
+        addEventListener("mouseup", function() {
+            carrotImg.setAttribute("width", "15%");
+        });
+        
         
         // for(let i = 0; i < document.querySelectorAll("ugBtn".length); i++)
         // {
@@ -66,16 +92,23 @@ document.addEventListener("DOMContentLoaded", function() {
     
     function handleCarrotClick() 
     {
-        let lucky = dice.roll(1000);
+        profitEffectAmount = -carrotMoney;
+        let lucky = dice.roll(luckyClickChance);
         console.log(lucky);
         console.log(upgradeStats[2]);
         
         if (lucky == false) {     
             carrotMoney += upgradeStats[1];
+
         } else {
             carrotMoney += upgradeStats[2];
+            
         }
+        profitEffectAmount = profitEffectAmount + carrotMoney;
+        console.log(profitEffectAmount);
+        console.log(upgradeStats[1]);
         carrotMoney++;
+        profitEffect(profitEffectAmount);
         displayUpdate();
     }
     
@@ -95,27 +128,37 @@ document.addEventListener("DOMContentLoaded", function() {
         displayUpdate();
         
     }
+
+
+
+    function profitEffect(profitEffectAmount) {
+        let newDiv = document.createElement("h2");
+        
+        newDiv.innerHTML = `+$${Math.floor(profitEffectAmount)}`;
+        newDiv.classList.add("gain");
+        newDiv.setAttribute("text-anchor", "middle");
+        document.querySelector(".player-info").prepend(newDiv);
+        setTimeout(() => { newDiv.remove(); }, 1000);
+    }
     
     function displayUpdate()
     {
-        upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, 100000000*upgradeLVL[2]*2]
+        upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, upgradeStats[1]*luckyClickChance*upgradeLVL[2]]
         upgradeCost = [100*(upgradeLVL[0]+1),125*(upgradeLVL[1]+1),1000*(upgradeLVL[2]+1)];
         
         for(let i = 0; i < upgradeName.length; i++)
         {
             cost[i].innerHTML = `-$${upgradeCost[i]}`;
         }
-        balanceDisplay.innerHTML = `$${Math.round(carrotMoney)}`;
+        balanceDisplay.innerHTML = `$${Math.floor(carrotMoney)}`;
+        balanceDisplay.setAttribute("text-anchor", "middle");
         
     }
         setInterval(function(){
-            if (time == 222) {
-                carrotMoney += upgradeStats[0];
-                time = 0;
-            };
+            carrotMoney += upgradeStats[0];
+            profitEffect(upgradeStats[0]);
             displayUpdate();
-            time++
-        }, 
-            );
+            
+        }, 1000);
     
 });
