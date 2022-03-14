@@ -1,41 +1,77 @@
+body * {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+
+h2 {
+    font-size: 30px;
+}
 .player-info{
+    display: flex;
     position: relative;
-    padding-bottom: 100px;
-    text-anchor: middle;
+    padding: 60px;
+    padding-top: 0px;
+    align-items: center;
+    flex-direction: column;
+
 }
 
 .player-info * {
     position: absolute;
-    left: 50%;
-    align: center;
-    text-anchor: inherit;
+    text-align: center;
+    align-self: center;
 }
 
-.player-info .gain {
+.loss, .gain {
     margin-top: 0px;
-    color: rgb(50, 194, 50);  
     z-index: 666;
     opacity: 1;
-    animation: 1s jumpfade infinite;
+    
 }
+.gain { color: rgb(50, 194, 50);
+        animation: 100ms jumpfade infinite;}    
+
+.loss { color: rgb(255, 46, 46);
+        animation: jumpfade2 200ms infinite;
+    }
+
+
+
 
 @keyframes jumpfade {
     100% {
-        transform: translateY(-50px);
-        opacity: 0;
+        transform: translateY(-14px);
+        opacity: 0.2;
+    }
+}
+
+@keyframes jumpfade2 {
+    0% {
+        transform: translateY(-28px);
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 0.0;
     }
 }
 
 #carrot
 {
-    padding-top: 1%;
+    padding-top: 20px;
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
-    min-height: 190px;
+    min-height: 200px;
+    
 }
 
 .ugBtn {
+    border-color: rgb(95, 184, 95);
+    background-color: green;
+    font-weight: bold;
+    color: white;
+    padding: 5px;
     -webkit-user-drag: none;
     user-select: none;
     -moz-user-select: none;
@@ -52,37 +88,56 @@
     -ms-user-select: none;
 }
 
+.carrotClick {
+
+    position: absolute;
+    opacity: 1;
+    animation: 300ms zoominfade infinite;
+}
+
+@keyframes zoominfade{
+    0% {
+        opacity: 1;
+        width: 200px;
+    }
+    100% {
+        opacity: 0;
+        width: 270px;
+    }
+}
+
 .upgrades_Container
 {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
     justify-content: center;
-    flex-direction: column;
-    align-content: center;
-
+    grid-template-columns: 80%;
 }
+
 
 .upgrade 
 {   
-    margin: 1em;
-    width: 40%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.upgradeInfo 
-{
-    display: flex;
-    justify-content: space-between;
-    width: 230px;
-}
-
-.upgradePay 
-{
-    display: flex;
-    justify-content: space-between;
-    width: 170px;
+    justify-content: center;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 100px;
+    grid-gap: 5%;
+    grid-auto-flow: column;
+    grid-template-columns: 5;
+    grid-template-rows: 4;
+    grid-auto-rows: 60%;
+    
+    
 }
 
 
+
+
+
+.displayName {
+    font-size: 120%;
+}
+    
+.cost {
+    align-items: center;
+}

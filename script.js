@@ -3,23 +3,33 @@ document.addEventListener("DOMContentLoaded", function() {
     let number;
     let time = 0;
     let upgradeLVL = [1, 1, 1];
-    let upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5,100000000000];
+    let upgradeStats = [0,0,0];
     let upgradeName = ["perSec", "perClick", "luckyClickChance"];
-    let upgradeCost = [100*(upgradeLVL[0]),125*(upgradeLVL[1]+1),1000*(upgradeLVL[2]+1)];
+    
+    let upgradeCost = new Array(3);
+    
+    let started = false;
+    let widestName = [0,-1];
+    let upgradeDisplayName = new Array(3);
 
     let luckyClickChance = 1000;
 
-    let profitEffectAmount;
+    
+    
 
+    let profitEffectAmount;
+    let loss;
     let balance = document.createElement("h2");
 
-        balance.setAttribute("color", "black");     
+        balance.setAttribute("style", "color:black;");     
         balance.innerHTML = `$${carrotMoney}`;
+        balance.setAttribute("style", "text-anchor: middle;");
         document.querySelector(".player-info").prepend(balance);
 
 
     const balanceDisplay = balance;
     
+    const upgradeNameDisplay = document.querySelectorAll(".displayName");
     const ugBtn = document.querySelectorAll(".ugBtn");
     const cost = document.querySelectorAll(".cost")
     const LVL = document.querySelectorAll(".LVL");
@@ -33,6 +43,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     
+    
 
     
     
@@ -42,20 +53,31 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // }
         
-        const carrotImg = document.querySelector("#carrot img")
+
+        const carrotImg = document.querySelector("#carrot img");
         const carrotBtn = document.querySelector("#carrot");
 
-        carrotBtn.addEventListener("click", handleCarrotClick);
 
         carrotBtn.addEventListener("mousedown", function() {
-            carrotImg.setAttribute("width", "13%");
+            
+            carrotImg.setAttribute("width", "170px");
+            
         });
         
-        addEventListener("mouseup", function() {
-            carrotImg.setAttribute("width", "15%");
+        carrotBtn.addEventListener("mouseup", function() {      
+            handleCarrotClick();
+            let carrotImgEffect = document.createElement("img");
+            carrotImgEffect.setAttribute("src", "carrot.png");
+            carrotImg.setAttribute("width", "200px");
+            carrotImgEffect.remove();
+            carrotImgEffect.classList.add("carrotClick");
+            document.querySelector("#carrot").append(carrotImgEffect);
+            setTimeout(() => { carrotImgEffect.remove(); }, 300);
+            started = true;
         });
         
-        
+        displayUpdate();
+
         // for(let i = 0; i < document.querySelectorAll("ugBtn".length); i++)
         // {
             //     const ugBtn = document.querySelector(`'.ugBtn${i}`);
@@ -110,6 +132,8 @@ document.addEventListener("DOMContentLoaded", function() {
         carrotMoney++;
         profitEffect(profitEffectAmount);
         displayUpdate();
+
+        let loss = false;
     }
     
     function upgrade() 
@@ -117,47 +141,76 @@ document.addEventListener("DOMContentLoaded", function() {
         if (carrotMoney >= upgradeCost[number]) 
         {
             carrotMoney -= upgradeCost[number];
-            upgradeLVL[number]++;   
+            upgradeLVL[number]++;
+            loss = true;
+            profitEffect(upgradeCost[number]);   
         }
         number = -1;
         for(let i = 0; i < upgradeName.length; i++)
         {
-            LVL[i].innerHTML = `Lv. ${upgradeLVL[i]}`;
+            LVL[i].innerHTML = `Lv. <b>${upgradeLVL[i]}</b>`;
+
         }
             
         displayUpdate();
-        
+
     }
+
 
 
 
     function profitEffect(profitEffectAmount) {
         let newDiv = document.createElement("h2");
-        
-        newDiv.innerHTML = `+$${Math.floor(profitEffectAmount)}`;
-        newDiv.classList.add("gain");
-        newDiv.setAttribute("text-anchor", "middle");
         document.querySelector(".player-info").prepend(newDiv);
-        setTimeout(() => { newDiv.remove(); }, 1000);
+        
+        
+        if (loss == true) {
+            newDiv.innerHTML = `-$${Math.floor(profitEffectAmount)}`;
+            newDiv.classList.add("loss");
+            setTimeout(() => { newDiv.remove(); }, 200);
+            
+        } else {
+            newDiv.innerHTML = `+$${Math.floor(profitEffectAmount)}`;
+            newDiv.classList.add("gain");
+            setTimeout(() => { newDiv.remove(); }, 100);
+            
+        }
+        
+        loss = false;
     }
     
     function displayUpdate()
     {
-        upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, upgradeStats[1]*luckyClickChance*upgradeLVL[2]]
-        upgradeCost = [100*(upgradeLVL[0]+1),125*(upgradeLVL[1]+1),1000*(upgradeLVL[2]+1)];
+        upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, upgradeStats[1]*luckyClickChance*upgradeLVL[2]];
+        upgradeStats[2] = upgradeStats[1]*luckyClickChance*upgradeLVL[2];
+        upgradeCost = [100*(upgradeLVL[0]+1),125*(upgradeLVL[1]+1),luckyClickChance*(upgradeLVL[2]+1)];
+        upgradeDisplayName = [`Per Second \n($${Math.floor(upgradeStats[0])})`, `Per Click ($${upgradeStats[1]})`, `Lucky Click (x${luckyClickChance*upgradeLVL[2]})`];
         
+        for (let i = 0; i < upgradeNameDisplay.length; i++) {
+            upgradeNameDisplay[i].innerHTML = upgradeDisplayName[i];
+            
+            if (widestName[0] <= upgradeNameDisplay[i].innerHTML.length) {
+                widestName[1] = i;
+                widestName[0] = upgradeNameDisplay[i].innerHTML.length;
+                
+                console.log(widestName[0]);
+            }
+        }
+        document.querySelector(".upgrade").setAttribute("style", `grid-template-columns: ${widestName[0]*5}px 10px 1fr 1fr`);
         for(let i = 0; i < upgradeName.length; i++)
         {
             cost[i].innerHTML = `-$${upgradeCost[i]}`;
         }
         balanceDisplay.innerHTML = `$${Math.floor(carrotMoney)}`;
-        balanceDisplay.setAttribute("text-anchor", "middle");
         
     }
         setInterval(function(){
-            carrotMoney += upgradeStats[0];
-            profitEffect(upgradeStats[0]);
-            displayUpdate();
+            if (started == true) {
+                carrotMoney += upgradeStats[0];
+                profitEffect(upgradeStats[0]);
+                displayUpdate();
+            }
+            
             
         }, 1000);
     
