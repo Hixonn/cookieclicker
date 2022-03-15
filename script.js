@@ -2,20 +2,18 @@ document.addEventListener("DOMContentLoaded", function() {
     let carrotMoney = 0;
     let number;
     let time = 0;
-    let upgradeLVL = [1, 1, 1];
-    let upgradeStats = [0,0,0];
-    let upgradeName = ["perSec", "perClick", "luckyClickChance"];
-    
-    let upgradeCost = new Array(3);
-    
-    let started = false;
-    let widestName = [0,-1];
-    let upgradeDisplayName = new Array(3);
 
+    let upgradeLVL = [1,1,1];
     let luckyClickChance = 1000;
+    let started = false;
 
+    let upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, 5*upgradeLVL[1]*5*luckyClickChance*upgradeLVL[2]];
+    let upgradeCost = [100*(upgradeLVL[0]+1),125*(upgradeLVL[1]+1),luckyClickChance*(upgradeLVL[2]+1)];
+    let upgradeDisplayName = [`Per Second \n($${Math.floor(upgradeStats[0])})`, `Per Click ($${upgradeStats[1]})`, `Lucky Click (x${luckyClickChance*upgradeLVL[2]})`];    
     
-    
+    let name = new Array(upgradeDisplayName.length);
+    let level = new Array(upgradeDisplayName.length);
+    let button = new Array(upgradeDisplayName.length);
 
     let profitEffectAmount;
     let loss;
@@ -33,14 +31,33 @@ document.addEventListener("DOMContentLoaded", function() {
     const ugBtn = document.querySelectorAll(".ugBtn");
     const cost = document.querySelectorAll(".cost")
     const LVL = document.querySelectorAll(".LVL");
+
+    for (let i = 0; i < upgradeDisplayName.length; i++) {
+        name[i] = document.createElement("p");
+        name[i].innerHTML = upgradeDisplayName[i];
+        name[i].classList.add("name");
+        document.querySelector(".name").append(name[i]);
+
+        level[i] = document.createElement("p");
+        level[i].innerHTML = `<td nowrap>Lv. <b>${upgradeLVL[i]}</b></td>`;
+        level[i].classList.add("level");
+        document.querySelector(".level").append(level[i]);
+        
+
+        button[i] = document.createElement("p");
+        button[i].innerHTML = `<button class="ugBtn">UPGRADE</button>`;
+        button[i].classList.add("button");
+        document.querySelector(".button").append(button[i]);
+
+        cost[i] = document.createElement("p");
+        cost[i].innerHTML = `-$${upgradeCost[i]}`;
+        cost[i].classList.add("cost");
+        document.querySelector(".cost").append(button[i]);
+    }
+
     console.log(cost.length,ugBtn.length);
     
-    for (let i = 0; i < ugBtn.length; i++) {
-        // ugBtn[i] = document.querySelectorAll(`.ugBtn:nth-child(${i+1})`); 
-        ugBtn[i].addEventListener("click", function(){number = i});
-        ugBtn[i].addEventListener("click", upgrade);
-        
-    }
+    
 
     
     
@@ -146,9 +163,9 @@ document.addEventListener("DOMContentLoaded", function() {
             profitEffect(upgradeCost[number]);   
         }
         number = -1;
-        for(let i = 0; i < upgradeName.length; i++)
+        for(let i = 0; i < upgradeDisplayName.length; i++)
         {
-            LVL[i].innerHTML = `Lv. <b>${upgradeLVL[i]}</b>`;
+            LVL[i].innerHTML = `<td nowrap>Lv. <b>${upgradeLVL[i]}</b></td>`;
 
         }
             
@@ -180,32 +197,25 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     function displayUpdate()
-    {
-        upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, upgradeStats[1]*luckyClickChance*upgradeLVL[2]];
-        upgradeStats[2] = upgradeStats[1]*luckyClickChance*upgradeLVL[2];
-        upgradeCost = [100*(upgradeLVL[0]+1),125*(upgradeLVL[1]+1),luckyClickChance*(upgradeLVL[2]+1)];
-        upgradeDisplayName = [`Per Second \n($${Math.floor(upgradeStats[0])})`, `Per Click ($${upgradeStats[1]})`, `Lucky Click (x${luckyClickChance*upgradeLVL[2]})`];
-        
-        for (let i = 0; i < upgradeNameDisplay.length; i++) {
-            upgradeNameDisplay[i].innerHTML = upgradeDisplayName[i];
-            
-            if (widestName[0] <= upgradeNameDisplay[i].innerHTML.length) {
-                widestName[1] = i;
-                widestName[0] = upgradeNameDisplay[i].innerHTML.length;
-                
-                console.log(widestName[0]);
-            }
-        }
-        document.querySelector(".upgrade").setAttribute("style", `grid-template-columns: ${widestName[0]*5}px 10px 1fr 1fr`);
-        for(let i = 0; i < upgradeName.length; i++)
-        {
+    {   
+        for (let i = 0; i < upgradeDisplayName.length; i++) {    
+            name[i].innerHTML = upgradeDisplayName[i];
+            level[i].innerHTML = `<td nowrap>Lv. <b>${upgradeLVL[i]}</b></td>`;
+            button[i].innerHTML = `<button class="ugBtn">UPGRADE</button>`;
             cost[i].innerHTML = `-$${upgradeCost[i]}`;
         }
+        
+        
         balanceDisplay.innerHTML = `$${Math.floor(carrotMoney)}`;
         
     }
         setInterval(function(){
+            upgradeStats = [3*upgradeLVL[0]*3.5, 5*upgradeLVL[1]*5, 5*upgradeLVL[1]*5*luckyClickChance*upgradeLVL[2]];
+            upgradeCost = [100*(upgradeLVL[0]+1),125*(upgradeLVL[1]+1),luckyClickChance*(upgradeLVL[2]+1)];
+            upgradeDisplayName = [`Per Second \n($${Math.floor(upgradeStats[0])})`, `Per Click ($${upgradeStats[1]})`, `Lucky Click (x${luckyClickChance*upgradeLVL[2]})`];
+
             if (started == true) {
+                       
                 carrotMoney += upgradeStats[0];
                 profitEffect(upgradeStats[0]);
                 displayUpdate();
@@ -213,5 +223,14 @@ document.addEventListener("DOMContentLoaded", function() {
             
             
         }, 1000);
+        
+        
+
     
+    for (let i = 0; i < button.length; i++) {
+        // ugBtn[i] = document.querySelectorAll(`.ugBtn:nth-child(${i+1})`); 
+        button[i].addEventListener("click", function(){number = i});
+        button[i].addEventListener("click", upgrade);
+        
+    }
 });
